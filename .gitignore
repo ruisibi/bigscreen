@@ -1,2 +1,8 @@
 /target
-/.idea
+.idea
+.vscode/
+.mvn
+/src/main/webapp/WEB-INF/ext-temp/
+/web-vue/node_modules/
+/web-vue/dist/
+.DS_Store
