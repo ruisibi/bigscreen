@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.model.TableMeasureMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruisitech.bi.entity.model.TableMeasure">
+		<id column="rid" property="kpiId"/>
+		<result column="kpi_name" property="name"/>
+		<result column="kpi_desc_key" property="kpinote"/>
+		<result column="col_id" property="colId"/>
+		<result column="col_type" property="colType"/>
+		<result column="unit" property="unit"/>
+		<result column="fmt" property="fmt"/>
+		<result column="aggre" property="aggre"/>
+		<result column="calc_kpi" property="calcKpi"/>
+		<result column="calc" property="calc"/>
+		<result column="tid" property="tid"/>
+		<result column="kpigroup" property="kpiGroup"/>
+		<result column="group_name" property="kpiGroupName"/>
+		<result column="from_col" property="fromCol"/>
+		<result column="olap_cube_col_meta_col_name" property="col"/>
+		<result column="distinct_col" property="distinctCol" />
+    </resultMap>
+
+
+   <insert id="insertKpi" parameterType="com.ruisitech.bi.entity.model.TableMeasure">
+   		insert into olap_kpi_list(<if test="idType == 2">rid,</if>kpi_name
+   		<if test="kpinote != null" >
+   		, kpi_desc_key
+   		</if>
+   		<if test="unit != null" >
+   		, unit
+   		</if>
+   		<if test="fmt != null" >
+   		, fmt
+   		</if>
+   		<if test="aggre != null" >
+   		, aggre
+   		</if>
+   		<if test="calcKpi != null" >
+   		, calc_kpi
+   		</if>
+   		<if test="kpiGroup != null" >
+   		, kpigroup
+   		</if>
+   		<if test="fromCol != null" >
+   		, from_col
+   		</if>
+	   <if test="distinctCol != null" >
+		   , distinct_col
+	   </if>
+   		,tid
+   		)
+		values(<if test="idType == 2">#{kpiId},</if> #{name}
+			<if test="kpinote != null" >
+			, #{kpinote}
+			</if>
+			<if test="unit != null" >
+			, #{unit}
+			</if>
+			<if test="fmt != null" >
+			, #{fmt}
+			</if>
+			<if test="aggre != null" >
+			, #{aggre}
+			</if>
+			<if test="calcKpi != null" >
+			, #{calcKpi}
+			</if>
+			<if test="kpiGroup != null" >
+	   		, #{kpiGroup}
+	   		</if>
+	   		<if test="fromCol != null" >
+	   		, #{fromCol}
+	   		</if>
+		   <if test="distinctCol != null" >
+			   , #{distinctCol}
+		   </if>
+			, #{tid}
+		)
+   </insert>
+
+   <update id="updateKpi" parameterType="com.ruisitech.bi.entity.model.TableMeasure">
+		update olap_kpi_list set
+			kpi_name = #{name}
+			<if test="kpinote != null" >
+			, kpi_desc_key = #{kpinote}
+			</if>
+			<if test="unit != null" >
+			, unit = #{unit}
+			</if>
+			<if test="fmt != null" >
+			, fmt = #{fmt}
+			</if>
+			<if test="aggre != null" >
+			, aggre = #{aggre}
+			</if>
+			<if test="kpiGroup != null" >
+			, kpigroup = #{kpiGroup}
+			</if>
+			<if test="fromCol != null" >
+			, from_col = #{fromCol}
+			</if>
+		   <if test="distinctCol != null" >
+			   , distinct_col = #{distinctCol}
+		   </if>
+		where rid = #{targetId} and tid = #{tid}
+	</update>
+
+	<delete id="deleteKpi" parameterType="com.ruisitech.bi.entity.model.TableMeasure">
+		delete from olap_kpi_list where tid = #{tid}
+		<if test="kpiId != null">
+			and rid = #{kpiId}
+		</if>
+	</delete>
+
+   <select id="getMaxKpiId" resultType="java.lang.Integer">
+   		select case WHEN max(rid) is null then 1 else  max(rid) + 1 end  from olap_kpi_list
+   </select>
+
+   	<select id="getTableKpis" resultMap="BaseResultMap">
+		 select b.rid, a.col_type , a.col_id , a.col_name as "olap_cube_col_meta_col_name" , a.alias , a.ord , b.tid,
+		 b.kpi_name , b.unit,b.aggre , b.calc_kpi , a.calc, b.kpigroup, c.group_name,
+		 b.fmt, b.rate , b.kpi_desc_key, b.from_col, b.distinct_col
+	    from olap_table_col_meta a join  olap_kpi_list b on a.col_id = b.rid
+	    left join olap_kpi_group c on b.kpigroup = c.group_id
+	    where  col_type = 2 and a.tid = #{tid}
+	    order by a.ord
+	</select>
+
+	<select id="listKpiDesc" resultType="java.util.HashMap">
+		select b.rid "kpiId", kpi_name "kpiName", b.unit "unit", b.kpi_desc_key "kpiDesc"
+		from olap_table_col_meta a, olap_kpi_list b
+		where col_type = 2 and a.col_id =  b.rid and a.tid in (${selectDsIds})  order by a.tid, a.ord
+	</select>
+
+	<select id="listGroup" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select group_id from olap_kpi_group where tid = #{tid}
+	</select>
+
+	<insert id="insertKpiGroup" parameterType="com.ruisitech.bi.entity.model.TableMeasure">
+		insert into olap_kpi_group(group_id, group_name, tid)
+		values(#{kpiGroup}, #{kpiGroupName}, #{tid})
+	</insert>
+
+	<delete id="deleteKpiGroup">
+		delete from olap_kpi_group where group_id = #{kpiGroup}
+	</delete>
+
+	<delete id="deleteKpiGroupByTid">
+		delete from olap_kpi_group where tid = #{tid}
+	</delete>
+</mapper>

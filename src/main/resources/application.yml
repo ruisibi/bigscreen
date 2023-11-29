@@ -1,0 +1,93 @@
+#####################################系统信息################################
+rsbi:
+  name: 睿思BI数据大屏
+  version: 开源版
+  versionNumber: 5.3
+  lastupdate: 2023-11-20
+  net: https://www.ruisitech.com
+  upFilePath: #上传文件路径
+  templateUrl: https://www.ruisitech.com/rsbi-ultimate/  #下载模版的根地址
+  templateToken: 60e90ed3-d8b3-4ae8-8510-44bacb7e0662  #下载模版的验证token
+  provideTemplateService: false #本服务是否提供下载模板的功能
+
+##端口配置
+server:
+  port: 8082
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+#数据库连接 mysql
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    dbType: mysql #定义支撑库类型
+    dwType: mysql #定义数据仓库类型
+    druid:
+      master:  # 支持库
+        url: jdbc:mysql://localhost:3306/rsbi_bigscreen?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8
+        username: root
+        password: 12345678
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        initialSize: 5
+        minIdle: 10
+        maxActive: 50
+        maxWait: 60000
+      datawarehouse:  #数据仓
+        url: jdbc:mysql://localhost:3306/rsbi_bigscreen_dw?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8
+        username: root
+        password: 12345678
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        initialSize: 5
+        minIdle: 10
+        maxActive: 50
+        maxWait: 60000
+  #redis配置
+  redis:
+    port: 6379
+    database: 1
+    host: localhost
+    password:
+    jedis:
+      pool:
+        max-active: 100
+        max-wait: 1000ms
+        max-idle: 200
+        min-idle: 0
+    timeout: 5000ms
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+#mybatis:
+  #mapper配置文件
+  #mapper-locations: classpath:mybatis/*.xml,classpath:mybatis/**/*.xml
+#logging:
+#  config: classpath:log4j.properties
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: false  #开启优化，如果开启优化，在分页页码结果没有数据的时候,会显示有数据的页码数据
+  supportMethodsArguments: true #是否支持接口参数来传递分页参数，默认false
+  pageSizeZero: true #pageSize=0 返回所有
+  params: count=countSql
+
+
+##########################
+# ftp相关，用来存储上传的文件，解决tomcat集群上传文件问题
+# ######################
+dfs:
+  ftp:
+    use: false   #是否启用 dfs
+    host: 192.168.1.7
+    port: 21
+    user: hq
+    password: 123456
+  nginx:
+    #nginx访问ftp文件的IP
+    host: http://192.168.1.7

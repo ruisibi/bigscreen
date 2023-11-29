@@ -1,0 +1,1 @@
+select browser k7, count(rid) d1,count(distinct ip) d18 from (SELECT * FROM ruisi.rs_logs) tt where 1=1  	and browser = 'Safari' group by browser,@groupzwf

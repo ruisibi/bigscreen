@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.model.TableMetaColMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruisitech.bi.entity.model.TableMetaCol">
+		<id column="rid" property="rid"/>
+		<result column="tid" property="tid"/>
+		<result column="col_type" property="colType"/>
+		<result column="col_id" property="colId"/>
+		<result column="col_name" property="col"/>
+		<result column="alias" property="alias"/>
+		<result column="ord" property="ord"/>
+		<result column="calc" property="calc"/>
+    </resultMap>
+
+
+   <select id="getMaxRid" resultType="java.lang.Integer">
+   		select case WHEN max(rid) is null then 1 else  max(rid) + 1 end "id" from olap_table_col_meta
+   </select>
+
+   <insert id="insertMeta" parameterType="com.ruisitech.bi.entity.model.TableMetaCol">
+   		insert into olap_table_col_meta(<if test="idType == 2">rid,</if> tid
+   		<if test=" colType != null">
+   			, col_type
+   		</if>
+   		<if test=" colId != null">
+   			,col_id
+   		</if>
+   		<if test=" col != null">
+   			,col_name
+   		</if>
+   		<if test=" alias != null">
+   			,alias
+   		</if>
+   		<if test=" calc != null">
+   			,calc
+   		</if>
+   		<if test=" ord != null">
+   			,ord
+   		</if>
+   		)
+   		values(<if test="idType == 2">#{rid},</if> #{tid}
+	   		<if test=" colType != null">
+	   			, #{colType}
+	   		</if>
+	   		<if test=" colId != null">
+	   			, #{colId}
+	   		</if>
+	   		<if test=" col != null">
+	   			, #{col}
+	   		</if>
+	   		<if test=" alias != null">
+	   			,#{alias}
+	   		</if>
+	   		<if test=" calc != null">
+	   			,#{calc}
+	   		</if>
+	   		<if test=" ord != null">
+	   			, #{ord}
+	   		</if>
+   		)
+   </insert>
+
+   <delete id="deleteKpiMeta" parameterType="java.lang.Integer">
+   		delete from olap_table_col_meta where tid = #{tid} and col_type = 2
+   </delete>
+
+   <delete id="deleteDimMeta" parameterType="java.lang.Integer">
+   		delete from olap_table_col_meta where tid = #{tid} and col_type = 1
+   </delete>
+
+     <delete id="deleteByTid" parameterType="java.lang.Integer">
+   		delete from olap_table_col_meta where tid = #{tid}
+   </delete>
+
+   <select id="queryMetaCols" resultType="java.util.HashMap">
+   		select a.col_name as "colName", a.alias as "alias", b.from_col as "fromCol", b.KEY_VAL_TYPE as "valType" from olap_table_col_meta a, olap_dim_list b
+		where
+		a.col_id = b.dim_id and a.col_type = 1 and a.col_name != b.from_col
+		and a.tid = #{tid}
+   </select>
+</mapper>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.bigscreen.BigScreenMapper" >
+  <resultMap id="BaseResultMap" type="com.ruisitech.bi.entity.bigscreen.BigScreen" >
+    <id column="Id" property="id" />
+    <result column="user_id" property="userId" />
+    <result column="createdate" property="createdate" />
+    <result column="updatedate" property="updatedate" />
+    <result column="page_name" property="pageName"  />
+    <result column="editor_enable" property="editorEnable"  />
+    <result column="cata_id" property="cataId" />
+    <result column="login_name" property="userName" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.ruisitech.bi.entity.bigscreen.BigScreen" extends="BaseResultMap" >
+    <result column="page_info" property="pageInfo" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, user_id, createdate, updatedate, page_name, editor_enable, cata_id
+  </sql>
+  <sql id="Blob_Column_List" >
+    page_info
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bigscreen_user_save
+    where Id = #{id}
+  </select>
+  <select id="maxBigScreenId" resultType="Integer">
+    select case WHEN max(id) is null then 1 else  max(id) + 1 end "id" from bigscreen_user_save
+  </select>
+  <select id="list" resultMap="BaseResultMap">
+    select
+    a.Id, a.user_id, a.createdate, a.updatedate, a.page_name, a.editor_enable, a.cata_id, b.login_name
+    from bigscreen_user_save a left join sc_login_user b on a.user_id = b.user_id
+    where 1=1
+    <if test="userId != null">
+        and a.user_id = #{userId}
+    </if>
+    <if test="search != null">
+      <bind name="pattern" value="'%' + search + '%'" />
+      AND page_name  LIKE #{pattern}
+    </if>
+
+    order by a.createdate desc
+  </select>
+  <delete id="deleteByPrimaryKey" >
+    delete from bigscreen_user_save
+    where Id = #{id}
+  </delete>
+  <insert id="insertSelective" parameterType="com.ruisitech.bi.entity.bigscreen.BigScreen" >
+    insert into bigscreen_user_save
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        Id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="createdate != null" >
+        createdate,
+      </if>
+      <if test="updatedate != null" >
+        updatedate,
+      </if>
+      <if test="pageName != null" >
+        page_name,
+      </if>
+      <if test="editorEnable != null" >
+        editor_enable,
+      </if>
+      <if test="cataId != null" >
+        cata_id,
+      </if>
+      <if test="pageInfo != null" >
+        page_info,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="userId != null" >
+        #{userId},
+      </if>
+      <if test="createdate != null" >
+        #{createdate},
+      </if>
+      <if test="updatedate != null" >
+        #{updatedate},
+      </if>
+      <if test="pageName != null" >
+        #{pageName},
+      </if>
+      <if test="editorEnable != null" >
+        #{editorEnable},
+      </if>
+      <if test="cataId != null" >
+        #{cataId},
+      </if>
+      <if test="pageInfo != null" >
+        #{pageInfo},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ruisitech.bi.entity.bigscreen.BigScreen" >
+    update bigscreen_user_save
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createdate != null" >
+        createdate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedate != null" >
+        updatedate = #{updatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pageName != null" >
+        page_name = #{pageName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorEnable != null" >
+        editor_enable = #{editorEnable,jdbcType=VARCHAR},
+      </if>
+      <if test="cataId != null" >
+        cata_id = #{cataId,jdbcType=INTEGER},
+      </if>
+      <if test="pageInfo != null" >
+        page_info = #{pageInfo,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where Id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 模版值查询user_id = 1 的，既 是管理员创建的大屏 -->
+  <select id="queryTemplate" resultMap="BaseResultMap">
+    select
+    a.Id, a.user_id, a.createdate, a.updatedate, a.page_name
+    from bigscreen_user_save a
+    where 1=1
+    and a.user_id = 1
+    order by a.createdate desc
+  </select>
+</mapper>

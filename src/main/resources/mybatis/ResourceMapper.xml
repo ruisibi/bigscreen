@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.bigscreen.ResourceMapper" >
+  <resultMap id="BaseResultMap" type="com.ruisitech.bi.entity.bigscreen.Resource" >
+    <id column="id" property="id" />
+    <result column="create_user" property="createUser" />
+    <result column="create_date" property="createDate" />
+    <result column="path" property="path" />
+    <result column="name" property="name" />
+  </resultMap>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select id,name, path, create_date, create_user
+    from sc_resource
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" >
+    delete from sc_resource
+    where id = #{id}
+  </delete>
+  <insert id="insertSelective" parameterType="com.ruisitech.bi.entity.bigscreen.Resource" >
+    insert into sc_resource(id, name, path, create_date, create_user)
+    values(#{id}, #{name}, #{path},
+    <if test="dbName == 'mysql'">
+      now()
+    </if>
+    <if test="dbName == 'oracle'">
+      sysdate
+    </if>
+    <if test="dbName == 'sqlser'">
+      getdate()
+    </if>
+    <if test="dbName == 'db2'">
+      current timestamp
+    </if>
+    <if test="dbName == 'psql'">
+      current_timestamp
+    </if>
+    <if test="dbName == 'sqlite'">
+      strftime('%s','now') * 1000
+    </if>
+    <if test="dbName == 'dm'">
+      sysdate()
+    </if>
+    , #{createUser})
+  </insert>
+
+  <select id="list" resultMap="BaseResultMap">
+    select id,name, path, create_date, create_user
+    from sc_resource
+    where 1=1
+    <if test="userId != null">
+     and create_user = #{userId}
+    </if>
+    order by create_date desc
+  </select>
+
+  <select id="listByIds" resultMap="BaseResultMap">
+    select id,name, path, create_date, create_user
+    from sc_resource
+    where 1=1 and id in
+    <foreach collection="ids" item="mid" separator="," open="(" close=")">
+    #{mid}
+    </foreach>
+    order by create_date desc
+  </select>
+
+  <select id="listByPaths" resultMap="BaseResultMap">
+    select id,name, path, create_date, create_user
+    from sc_resource
+    where 1=1 and path in
+    <foreach collection="paths" item="mid" separator="," open="(" close=")">
+      #{mid}
+    </foreach>
+    order by create_date desc
+  </select>
+</mapper>

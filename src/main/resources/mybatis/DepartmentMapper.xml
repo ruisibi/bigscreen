@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.frame.DepartmentMapper" >
+  <resultMap id="BaseResultMap" type="com.ruisitech.bi.entity.frame.Department" >
+    <id column="Id" property="id" />
+    <result column="dept_code" property="deptCode" />
+    <result column="dept_name" property="deptName" />
+    <result column="dept_name" property="text" />
+    <result column="dept_note" property="deptNote" />
+    <result column="pid" property="pid" />
+    <result column="state" property="state" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, dept_code, dept_name, dept_note, pid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sc_department
+    where Id = #{id}
+  </select>
+  <select id="list" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from sc_department
+  </select>
+  <select id="tree" resultMap="BaseResultMap" >
+    select
+    Id, dept_code, dept_name, dept_note, pid, 'fa fa-list-ul' as "icon",
+      CASE
+	     WHEN EXISTS
+	      (SELECT 1 FROM sc_department b WHERE b.pid = a.id) THEN
+	      true
+	     ELSE
+	      false
+	   END "children"
+    from sc_department a
+    where 1=1
+    <if test="pid != null">
+    	and a.pid = #{pid}
+    </if>
+  </select>
+  <select id="cntDepartmentUsers" resultType="java.lang.Integer">
+    select
+    count(*) cnt
+    from sc_login_user
+    where dept_id = #{deptId}
+  </select>
+  <select id="maxDeptId" resultType="java.lang.Integer">
+	 select case WHEN max(id) is null then 1 else  max(id) + 1 end "id" from sc_department
+  </select>
+  <delete id="deleteByPrimaryKey" >
+    delete from sc_department
+    where Id = #{id}
+  </delete>
+  <insert id="insertSelective" parameterType="com.ruisitech.bi.entity.frame.Department" >
+    insert into sc_department
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        Id,
+      </if>
+      <if test="deptCode != null" >
+        dept_code,
+      </if>
+      <if test="deptName != null" >
+        dept_name,
+      </if>
+      <if test="deptNote != null" >
+        dept_note,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="deptCode != null" >
+        #{deptCode},
+      </if>
+      <if test="deptName != null" >
+        #{deptName},
+      </if>
+      <if test="deptNote != null" >
+        #{deptNote},
+      </if>
+      <if test="pid != null" >
+        #{pid},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ruisitech.bi.entity.frame.Department" >
+    update sc_department
+    <set >
+      <if test="deptCode != null" >
+        dept_code = #{deptCode},
+      </if>
+      <if test="deptName != null" >
+        dept_name = #{deptName},
+      </if>
+      <if test="deptNote != null" >
+        dept_note = #{deptNote},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid},
+      </if>
+    </set>
+    where Id = #{id}
+  </update>
+</mapper>

@@ -1,0 +1,1 @@
+select DATE_FORMAT(date,'%Y-%m') k14, count(rid) d1,count(distinct ip) d18 from (SELECT * FROM ruisi.rs_logs) tt where 1=1   group by DATE_FORMAT(date,'%Y-%m'),@groupzwf

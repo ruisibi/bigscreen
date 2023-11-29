@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+	<properties>
+		<!--LOG_HOME:指定当前日志存放的目录 -->
+		<property name="LOG_PATH">/Users/huangqin/workSpace/logs</property>
+	</properties>
+	   <Appenders>
+	     <Console name="Console" target="SYSTEM_OUT">
+	       <PatternLayout pattern="%d{YYY-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
+	     </Console>
+		   <!--
+		   <RollingFile name="RollingFile"  fileName="${LOG_PATH}/log.log" filePattern="info-%d{yyyy-MM-dd}-%i.log">
+			   <PatternLayout pattern="%d{YYY-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+			   <Policies>
+				   <TimeBasedTriggeringPolicy/>
+				   <SizeBasedTriggeringPolicy/>
+			   </Policies>
+		   </RollingFile>
+		   -->
+	   </Appenders>
+	   <Loggers>
+	     <Root level="info">
+	       <AppenderRef ref="Console"/>
+			 <!--
+			 <AppenderRef ref="RollingFile" />
+			 -->
+	     </Root>
+	   </Loggers>
+</Configuration>

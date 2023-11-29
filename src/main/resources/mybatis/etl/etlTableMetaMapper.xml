@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.etl.EtlTableMetaMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruisitech.bi.entity.etl.EtlTableMeta">
+		<id column="table_id" property="tableId"/>
+		<result column="table_name" property="tableName"/>
+		<result column="table_note" property="tableNote"/>
+		<result column="crtuser" property="crtUser"/>
+		<result column="crtUserName" property="crtUserName"/>
+		<result column="crtdate" property="crtDate"/>
+		<result column="income" property="income"/>
+		<result column="table_desc" property="tableDesc"/>
+		<result column="table_sql" property="tableSql"/>
+		<result column="use_es" property="useEs"/>
+		<result column="es_enable" property="esEnable"/>
+		<result column="data_control_col" property="dataControlCol"/>
+		<result column="rest_url" property="restUrl"/>
+		<result column="rest_url_bak" property="restUrlBak"/>
+		<result column="rest_post_type" property="restPostType"/>
+		<result column="rest_data_key" property="restDataKey"/>
+		<result column="rest_params" property="restParams"/>
+		<result column="rest_data_proc" property="restDataProc"/>
+		<result column="rest_total_key" property="restTotalKey" />
+		<result column="dsource" property="dsourceId"/>
+		<result column="dsourceName" property="dsourceName"/>
+		<result column="table_level" property="tableLevel"/>
+		<result column="income_dsource" property="incomeDsource" />
+		<result column="src_tables" property="srcTables" />
+		<result column="exe_last_date" property="exeLastDate" />
+		<result column="incomeDsourceName" property="incomeDsourceName"/>
+		<result column="es_url" property="esUrl"/>
+		<result column="es_uname" property="esUname"/>
+		<result column="es_psd" property="esPsd"/>
+		<result column="es_version" property="esVersion"/>
+    </resultMap>
+
+	<!-- 如果有设置crtUser,权限叠加 创建人的表 和 管理员授权的表 -->
+	<select id="selectTables" resultMap="BaseResultMap">
+		select table_id , table_name , table_note , crtdate , b.login_name "crtUserName", a.crtuser,table_desc, income, src_tables, table_level, exe_last_date,
+		 table_sql, use_es,data_control_col, rest_url, rest_post_type, rest_data_key, rest_params,rest_data_proc, rest_url_bak, a.dsource,
+		 c.name as "dsourceName", es_url, es_uname, es_psd, es_version
+		from etl_src_meta a left join sc_login_user b on  a.crtuser = b.user_id
+		left join etl_datasource c on a.dsource = c.id
+		 where 1=1
+		 	<if test="income != null and income != ''">
+		 		and income = #{income}
+		 	</if>
+			<if test="tableLevel != null and tableLevel != ''">
+				and table_level
+				<if test="tableLevel != 'none'">
+					= #{tableLevel}
+				</if>
+				<if test="tableLevel == 'none'">
+					is null
+				</if>
+
+			</if>
+		   <if test="crtUser != null">
+			   and  ( a.crtuser = #{crtUser} or table_id in (
+			   select a.data_id from role_data_rela a, role_user_rela b where a.role_id = b.role_id and b.user_id = #{crtUser}
+			   ))
+		   </if>
+		 	<if test="keyword != null and keyword != ''">
+				<bind name="pattern" value="'%' + keyword + '%'" />
+				AND (table_name  LIKE #{pattern} or table_note  LIKE #{pattern})
+			</if>
+			<if test="srcTable != null and srcTable != ''">
+				<bind name="pattern" value="'%' + srcTable + '%'" />
+				AND src_tables LIKE #{pattern}
+			</if>
+		 order by crtdate desc
+	</select>
+
+	<select id="selectTablesNotEsAndRest" resultMap="BaseResultMap">
+		select table_id , table_name , table_note , crtdate , b.login_name "crtUserName", crtuser,table_desc,income, src_tables, table_level, exe_last_date,
+		 table_sql, use_es,data_control_col, rest_url, rest_post_type, rest_data_key, rest_params, rest_data_proc, rest_url_bak, a.dsource, es_url, es_uname, es_psd, es_version
+		from etl_src_meta a left join sc_login_user b on  a.crtuser = b.user_id
+		 where income not in ('es', 'rest')
+		<if test="crtUser != null">
+			and  ( a.crtuser = #{crtUser} or table_id in (
+			select a.data_id from role_data_rela a, role_user_rela b where a.role_id = b.role_id and b.user_id = #{crtUser}
+			))
+		</if>
+		 order by crtdate desc
+	</select>
+
+	<select id="selectTablesNotRest" resultMap="BaseResultMap">
+		select table_id , table_name , table_note , crtdate , b.login_name "crtUserName", crtuser,table_desc,income, src_tables, table_level, exe_last_date,
+		 table_sql, use_es,data_control_col, rest_url, rest_post_type, rest_data_key, rest_params, rest_data_proc, rest_url_bak, a.dsource, es_url, es_uname, es_psd, es_version
+		from etl_src_meta a left join sc_login_user b on  a.crtuser = b.user_id
+		 where income not in ('rest')
+		 	<if test="keyword != null and keyword != ''">
+				<bind name="pattern" value="'%' + keyword + '%'" />
+				AND (table_name  LIKE #{pattern} or table_note  LIKE #{pattern})
+			</if>
+			<if test="income != null and income != ''">
+		 		and income = #{income}
+		 	</if>
+		<if test="crtUser != null">
+			and  ( a.crtuser = #{crtUser} or table_id in (
+			select a.data_id from role_data_rela a, role_user_rela b where a.role_id = b.role_id and b.user_id = #{crtUser}
+			))
+		</if>
+		 order by crtdate desc
+	</select>
+
+	<select id="selectByIncomes" resultMap="BaseResultMap">
+		select table_id , table_name , table_note , crtdate , b.login_name "crtUserName", crtuser,table_desc,income,src_tables, table_level, exe_last_date,
+		 table_sql, use_es,data_control_col, rest_url, rest_post_type, rest_data_key, rest_params, rest_data_proc, rest_url_bak, a.dsource, es_url, es_uname, es_psd, es_version
+		from etl_src_meta a left join sc_login_user b on a.crtuser = b.user_id
+		 where 1=1
+		 	<if test="incomes != null and incomes.size() > 0">
+		 		  <foreach collection="incomes" open=" and income in (" close=")" item="icome" separator=",">
+			            #{icome}
+			      </foreach>
+		 	</if>
+			<if test="keyword != null and keyword != ''">
+				<bind name="pattern" value="'%' + keyword + '%'" />
+				AND (a.table_name  LIKE #{pattern} or a.table_note  LIKE #{pattern})
+			</if>
+			<if test="crtUser != null">
+				and  ( crtuser = #{crtUser} or table_id in (
+				select a.data_id from role_data_rela a, role_user_rela b where a.role_id = b.role_id and b.user_id = #{crtUser}
+				))
+			</if>
+		 order by crtdate desc
+	</select>
+
+	 <select id="getTable" resultMap="BaseResultMap">
+		select table_id , table_name , table_note , a.crtdate , b.login_name "crtUserName", a.crtuser,table_desc,income, src_tables, table_level, exe_last_date,
+		 table_sql, use_es, income, es_enable,data_control_col, rest_url, rest_post_type, rest_data_key, rest_params,rest_data_proc, rest_url_bak,  a.dsource,
+		 c.name incomeDsourceName, rest_total_key, es_url, es_uname, es_psd, es_version
+		from etl_src_meta a left join sc_login_user b on a.crtuser = b.user_id
+		left join etl_datasource c on a.income_dsource = c.id
+		 where table_id = #{tableId}
+	</select>
+
+	<select id="getTableByTname" resultMap="BaseResultMap">
+		select table_id , table_name , table_note , a.crtdate , b.login_name "crtUserName", a.crtuser,table_desc,income, src_tables, table_level, exe_last_date,
+		 table_sql, use_es, income, es_enable,data_control_col, rest_url, rest_post_type, rest_data_key, rest_params,rest_data_proc, rest_url_bak,  a.dsource,
+		 c.name incomeDsourceName, es_url, es_uname, es_psd, es_version
+		from etl_src_meta a left join sc_login_user b on a.crtuser = b.user_id
+		left join etl_datasource c on a.income_dsource = c.id
+		 where 1=1 and table_name = #{tableName}
+	</select>
+
+	<select id="tableExist" resultType="java.lang.Integer" parameterType="com.ruisitech.bi.entity.etl.EtlTableMeta">
+		select count(1) cnt from etl_src_meta
+		where
+		<if test="dbName == 'mysql'">
+			upper(table_name)
+		</if>
+		<if test="dbName == 'sqlser'">
+			upper(table_name)
+		</if>
+		<if test="dbName == 'oracle'">
+			UPPER(table_name)
+		</if>
+		<if test="dbName == 'db2'">
+			UPPER(table_name)
+		</if>
+		<if test="dbName == 'psql'">
+			UPPER(table_name)
+		</if>
+		<if test="dbName == 'sqlite'">
+			table_name
+		</if>
+		<if test="dbName == 'dm'">
+			UPPER(table_name)
+		</if>
+		= #{tableName}
+	</select>
+
+	<select id="maxTableId" resultType="java.lang.Integer">
+		select case WHEN max(table_id) is null then 1 else  max(table_id) + 1 end "rid" from etl_src_meta
+	</select>
+
+	<insert id="insertMetaTable" parameterType="com.ruisitech.bi.entity.etl.EtlTableMeta">
+		insert into etl_src_meta(<if test="idType == 2">table_id,</if> table_name, table_note, dsource, <if test="tableDesc != null">table_desc,</if> crtdate,
+		 crtuser, income <if test="tableSql != null">,table_sql</if> <if test="dataControlCol != null">,data_control_col</if>
+		 <if test="esEnable != null">,es_enable</if> <if test="useEs != null">,use_es</if>
+		 <if test="restUrl != null">,rest_url</if>
+		<if test="restUrlBak != null">,rest_url_bak</if>
+		 <if test="restPostType != null">,rest_post_type</if>
+		 <if test="restDataKey != null">,rest_data_key</if>
+		 <if test="restParams != null">,rest_params</if>
+		 <if test="restDataProc != null">,rest_data_proc</if>
+		<if test="restAuthType != null">,rest_auth_type</if>
+		<if test="tableLevel != null">,table_level</if>
+		<if test="incomeDsource != null">,income_dsource</if>
+		<if test="srcTables != null">,src_tables</if>
+		<if test="restTotalKey != null">,rest_total_key</if>
+		<if test="esUrl != null">,es_url</if>
+		<if test="esUname != null">,es_uname</if>
+		<if test="esPsd != null">,es_psd</if>
+		<if test="esVersion != null">,es_version</if>
+		 )
+		 values(<if test="idType == 2">#{tableId},</if> #{tableName}, #{tableNote}, #{dsourceId},  <if test="tableDesc != null">#{tableDesc},</if>
+		<if test="dbName == 'mysql'">
+			now()
+		</if>
+		<if test="dbName == 'sqlser'">
+			GETDATE()
+		</if>
+		<if test="dbName == 'oracle'">
+			sysdate
+		</if>
+		<if test="dbName == 'db2' ">
+			current timestamp
+		</if>
+		<if test="dbName == 'psql' ">
+				current_timestamp
+		</if>
+		<if test="dbName == 'sqlite'">
+			strftime('%s','now') * 1000
+		</if>
+		<if test="dbName == 'dm'">
+			sysdate()
+		</if>
+		, #{crtUser}, #{income} <if  test="tableSql != null">,#{tableSql}</if> <if test="dataControlCol != null">,#{dataControlCol}</if>
+		<if test="esEnable != null">,#{esEnable}</if> <if test="useEs != null">,#{useEs}</if>
+		<if test="restUrl != null">,#{restUrl}</if>
+		<if test="restUrlBak != null">,#{restUrlBak}</if>
+		<if test="restPostType != null">,#{restPostType}</if>
+		<if test="restDataKey != null">,#{restDataKey}</if>
+		<if test="restParams != null">,#{restParams}</if>
+		<if test="restDataProc != null">,#{restDataProc}</if>
+		<if test="restAuthType != null">,#{restAuthType}</if>
+		<if test="tableLevel != null">,#{tableLevel}</if>
+		<if test="incomeDsource != null">,#{incomeDsource}</if>
+		<if test="srcTables != null">,#{srcTables}</if>
+		<if test="restTotalKey != null">,#{restTotalKey}</if>
+		<if test="esUrl != null">,#{esUrl}</if>
+		<if test="esUname != null">,#{esUname}</if>
+		<if test="esPsd != null">,#{esPsd}</if>
+		<if test="esVersion != null">,#{esVersion}</if>
+		)
+	</insert>
+
+	<update id="updateMetaTable" parameterType="com.ruisitech.bi.entity.etl.EtlTableMeta">
+		update etl_src_meta
+		<set >
+			<if test="tableNote != null">
+				table_note=#{tableNote},
+			</if>
+			<if test="tableDesc != null">
+				table_desc=#{tableDesc},
+			</if>
+			<if test="tableName != null">
+				table_name=#{tableName},
+			</if>
+			<if test="tableSql != null">
+			 	table_sql = #{tableSql},
+			</if>
+			<if test="useEs != null">
+				use_es = #{useEs},
+			</if>
+			<if test="esEnable != null">
+			 	es_enable = #{esEnable},
+			</if>
+			<if test="dataControlCol != null">
+				data_control_col = #{dataControlCol},
+			</if>
+			<if test="restUrl != null">
+				rest_url = #{restUrl},
+			</if>
+			<if test="restUrlBak != null">
+				rest_url_bak = #{restUrlBak},
+			</if>
+			<if test="restPostType != null">
+				rest_post_type = #{restPostType},
+			</if>
+			<if test="restDataKey != null">
+				rest_data_key = #{restDataKey},
+			</if>
+			<if test="restParams != null">
+				rest_params = #{restParams},
+			</if>
+			<if test="restDataProc != null">
+				rest_data_proc = #{restDataProc},
+			</if>
+			<if test="restAuthType != null">
+				rest_auth_type = #{restAuthType},
+			</if>
+			<if test="tableLevel != null">
+				table_level = #{tableLevel},
+			</if>
+			<if test="incomeDsource != null">
+				income_dsource = #{incomeDsource},
+			</if>
+			<if test="srcTables != null">
+				src_tables = #{srcTables},
+			</if>
+			<if test="exeLastDate">
+				exe_last_date = #{exeLastDate},
+			</if>
+			<if test="restTotalKey">
+				rest_total_key = #{restTotalKey},
+			</if>
+			<if test="esUrl">
+				es_url = #{esUrl},
+			</if>
+			<if test="esUname">
+				es_uname = #{esUname},
+			</if>
+			<if test="esPsd">
+				es_psd = #{esPsd},
+			</if>
+			<if test="esVersion">
+				es_version = #{esVersion},
+			</if>
+		</set>
+		where table_id = #{tableId}
+	</update>
+
+	<update id="clearExeDate">
+		update etl_src_meta set exe_last_date = null
+		where table_id = #{tableId}
+	</update>
+
+	<delete id="deleteTable" parameterType="com.ruisitech.bi.entity.etl.EtlTableMeta">
+		delete from etl_src_meta where table_id = #{tableId}
+	</delete>
+
+	<update id="updateEsEnable" parameterType="com.ruisitech.bi.entity.etl.EtlTableMeta">
+		update etl_src_meta
+		set es_enable = #{esEnable},
+		exe_last_date = #{exeLastDate}
+		where table_id = #{tableId}
+	</update>
+
+	<update id="updateUseEs" parameterType="com.ruisitech.bi.entity.etl.EtlTableMeta">
+		update etl_src_meta set use_es = #{useEs}
+		where table_id = #{tableId}
+	</update>
+
+	<!-- 数据填报 选择表 -->
+	<select id="dwselectTables" resultMap="BaseResultMap">
+		select table_id, table_name, table_note, table_desc
+		from etl_src_meta a
+		 where income in ('etl', 'dw', 'custom')
+		 order by table_id
+	</select>
+
+	<select id="cntTables" resultType="java.lang.Integer">
+		select count(*) cnt
+		from etl_src_meta a
+		 where table_level = #{type}
+		<if test="crtUser != null">
+			and a.crtuser = #{crtUser}
+		</if>
+	</select>
+
+	<select id="listTablesInAncestry" resultMap="BaseResultMap">
+		SELECT a.table_id, a.table_name, a.table_note,  a.src_tables, a.table_level, b.name as incomeDsourceName
+		FROM etl_src_meta a left join etl_datasource b on a.income_dsource = b.id
+		where a.table_name is not null
+	</select>
+
+	<select id="searchTable" resultMap="BaseResultMap">
+		select table_id , table_name , table_note , crtdate , b.login_name "crtUserName", a.crtuser,table_desc, income, src_tables, table_level, exe_last_date,
+		table_sql, use_es,data_control_col, rest_url, rest_post_type, rest_data_key, rest_params,rest_data_proc, rest_url_bak, a.dsource,
+		c.name as "dsourceName", es_url, es_uname, es_psd, es_version
+		from etl_src_meta a left join sc_login_user b on  a.crtuser = b.user_id
+		left join etl_datasource c on a.income_dsource = c.id
+		where 1=1
+		<if test="dsource != null and dsource.size() > 0">
+			<foreach collection="dsource" open=" and income_dsource in (" close=")" item="ds" separator=",">
+				#{ds}
+			</foreach>
+		</if>
+		<if test="tableLevel != null and tableLevel.size() > 0">
+			<foreach collection="tableLevel" open=" and table_level in (" close=")" item="level" separator=",">
+				#{level}
+			</foreach>
+		</if>
+		<if test="crtUser != null">
+			and a.crtuser = #{crtUser}
+		</if>
+
+		<if test="keyword != null and keyword != ''">
+			<bind name="pattern" value="'%' + keyword + '%'" />
+			AND (table_name  LIKE #{pattern} or table_note  LIKE #{pattern} or table_desc  LIKE #{pattern})
+		</if>
+		order by crtdate desc
+	</select>
+
+	<select id="queryTfByTableId" resultType="java.util.HashMap">
+		select aa.*, bb.table_name as tableName , table_note as tableNote , crtdate, table_desc as tableDesc, src_tables srcTables,
+		exe_last_date exeLastDate, table_level as tableLevel
+		from (
+			SELECT id, name, table_meta_id as tid FROM etl_transform
+			where table_meta_id = #{tableId}
+			union all
+			SELECT cfgid as id, cfgname as name, target_table_id as tid FROM etl_config
+			where target_table_id = #{tableId}
+		) aa left join etl_src_meta bb on aa.tid = bb.table_id
+	</select>
+
+</mapper>

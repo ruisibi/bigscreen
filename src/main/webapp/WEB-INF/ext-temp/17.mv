@@ -1,0 +1,1 @@
+select sum(kpi_value) d5 from dcdb_tongji where 1=1  

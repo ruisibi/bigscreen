@@ -1,0 +1,399 @@
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar
+{
+    width: 10px;
+    height: 10px;
+    background-color: #F5F5F5;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0);
+    background-color: #F5F5F5;
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #F5F5F5;
+}
+
+html,body{
+    height: 100%;
+    width: 100%;
+    // background-color: #F5F5F5;
+    color: rgba(0,0,0,.7);
+    font-family: "microsoft yahei", arial, sans-serif;
+}
+
+.fillcontain{
+    height: 100%;
+    width: 100%;
+    background-color: #f0f3f4;
+}
+.wrapper-content {
+    padding: 20px;
+    height: calc(100% - 30px);
+    overflow: auto;
+}
+.wrapper-content-nomargin {
+    height: calc(100% - 30px);
+    overflow: hidden;
+}
+.ibox {
+    /**
+    margin-bottom: 20px;
+    **/
+    background-color: #fff;
+    border: 1px solid #dee5e7;
+    /**
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    **/
+	min-width:120px;
+}
+.ibox-title {
+    height: 30px;
+    border-color: #edf1f2;
+    background-color: #f6f8f8;
+    font-weight: 700;
+    padding: 8px 10px 3px 10px;
+    border-bottom: 1px solid transparent;
+    display: block;
+    clear: both;
+}
+.ibox-content {
+    padding: 15px 20px 20px 20px;
+    -webkit-border-image: none;
+    -o-border-image: none;
+    border-image: none;
+    border-top: 1px solid #e7eaec;
+	position:relative;
+}
+.el-table tr.tableHeadbg th {
+    background-color: #F5F5F6;
+    color: rgba(0, 0, 0, 0.7);
+    padding: 5px;
+}
+.optbtncls {
+    margin-bottom: 10px;
+}
+div.btn-group button.btn {
+    padding: 4px 12px !important;
+}
+//覆盖elementui 的 对话框样式
+.el-dialog__footer {
+    padding: 10px !important;
+    text-align: center !important;
+    background-color: #f8fafb !important;
+    border-top: 1px solid #e5e5e5 !important;
+}
+.el-dialog__header {
+    padding: 15px !important;
+    text-align: center !important;
+    background-color: #f8fafb !important;
+    border-bottom: 1px solid #e5e5e5 !important;
+    .el-dialog__title {
+        font-size: 20px;
+        font-weight: 600;
+    }
+}
+.el-button {
+    padding: 5px 12px !important;
+}
+/**
+.el-input__inner {
+    height: 32px !important;
+}
+**/
+.el-form-item {
+    margin-bottom:15px !important;
+}
+.el-form-item__error{
+    padding-top:0px !important;
+}
+.el-drawer__header {
+    padding: 3px !important;
+    margin-bottom: 0 !important;
+    border-color:#edf1f2;
+    background-color: #f6f8f8;
+    font-weight: 700;
+}
+//覆盖elementUI 的 导航菜单
+.el-menu--horizontal>.el-menu-item {
+    height:35px !important;
+    line-height: 35px !important;
+}
+.el-menu--horizontal>.el-submenu .el-submenu__title {
+    height:35px !important;
+    line-height: 35px !important;
+}
+.el-table th>.cell {
+    word-break: normal !important;
+}
+.btn-default {
+    color: #58666e !important;
+    background-color: #fcfdfd !important;
+    background-color: #fff !important;
+    border-color: #dee5e7 !important;
+    border-bottom-color: #d8e1e3 !important;
+    -webkit-box-shadow: 0 1px 1px rgba(90, 90, 90, 0.1) !important;
+    box-shadow: 0 1px 1px rgba(90, 90, 90, 0.1) !important;
+}
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active,
+.btn-default.active {
+    color: #58666e !important;
+    background-color: #edf1f2 !important;
+    border-color: #c7d3d6 !important;
+}
+.btn-rounded {
+    border-radius: 50px !important;
+}
+.btn-outline {
+    color: inherit !important;
+    background-color: transparent !important;
+    -webkit-transition: all .5s !important;
+    transition: all .5s !important;
+}
+ /**固定弹出窗口的高度 */
+ .el-dialog-div{
+    height: 50vh;
+    overflow: auto;
+ }
+ /** 弹框 body padding */
+ .nopadding .el-dialog__body{
+    padding: 5px !important;
+  }
+  /** 隐藏选项卡的阴影 */
+.el-tabs--border-card {
+	box-shadow:none !important;
+}
+.el-tabs--border-card>.el-tabs__content {
+    padding: 5px !important;
+}
+.el-collapse-item__content {
+    padding-bottom: 0px !important;
+}
+ .icon_kpi {
+    color: #e07900;
+ }
+ .icon_dim {
+	color:#006ae1;
+}
+/**jqueryui 拖拽CSS*/
+.vakata-dnd {
+	border:solid 1px #ddd;
+	background-color:#f5f5f5;
+	border-radius:3px;
+	z-index:9999;
+	padding:3px;
+	box-shadow:0 2px 3px 0 rgba(0,0,0,.16), 0 2px 5px 0 rgba(0,0,0,.12);
+	.miconcancel {
+		display:inline-block;
+		width:16px;
+		height:16px;
+		color:#3f36c3;
+	}
+}
+.lock-dg {
+	overflow:hidden;
+}
+.lock-dg .lock-dg-header, .lock-dg-fixed .lock-dg-fixed-header {
+    background-color: #F5F5F6;
+    overflow: hidden;
+}
+.lock-dg .lock-dg-body {
+    overflow-x: hidden;
+}
+.lock-dg .lock-dg-body:hover {
+    overflow-x: auto;
+}
+TABLE.lockgrid {
+	border-collapse:collapse;
+	table-layout:fixed;
+}
+TABLE.lockgrid TH {
+	text-align: center;
+    PADDING: 8px 3px 8px 3px;
+    font-size: 13px;
+    height:26px;
+	word-break:break-all;
+    word-wrap:break-word;
+}
+TABLE.lockgrid TD.pms {
+    color: rgb(255, 0, 0);
+    font-weight: bold;
+}
+TABLE.lockgrid th.crossHead0,TABLE.lockgrid th.crossHead1,TABLE.lockgrid th.crossHead2 {
+	text-align: center;
+}
+TABLE.lockgrid th.grid3-td {
+    border-right:1px solid #e7eaec;
+    border-left:1px solid #e7eaec;
+}
+TABLE.lockgrid TD.lockgrid-td {
+    padding: 8px 3px 8px 3px;
+    font-size: 12px;
+    height:20px;
+    border-left:1px solid #e7eaec;
+    border-bottom:1px solid #e7eaec;
+    border-right:1px solid #e7eaec;
+}
+TABLE.lockgrid TD.lockgrid-td-bs {
+    padding: 8px 3px 8px 3px;
+    font-size: 12px;
+    height:20px;
+}
+TABLE.lockgrid div.dg-cell {
+	width:90px;
+	overflow:hidden;
+}
+div.lock-dg-body TABLE.lockgrid tr:hover {
+	background-color:#FFFFD2;
+}
+.pagesizeinfo{
+	padding:0px 1px 0px 1px;
+    clear:both;
+}
+.pagesizeinfo .pagesizeLeft {
+	float:left;
+}
+.pagesizeinfo .pagesizeRight{
+	text-align:right;
+	padding:5px;
+}
+.el-upload__input {
+    display:none !important;
+}
+.el-collapse-item__content label.el-form-item__label {
+    font-weight:normal;
+}
+/** 指标预警样式 **/
+.warning1 {
+	display: inline-block;
+    width: 16px;
+	height:16px;
+	background-image:url(../assets/image/j1.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.warning2 {
+	display: inline-block;
+    width: 16px;
+	height:16px;
+	background-image:url(../assets/image/j2.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.warning3 {
+	display: inline-block;
+    width: 16px;
+	height:16px;
+	background-image:url(../assets/image/j3.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.warning4 {
+	display: inline-block;
+    width: 16px;
+	height:16px;
+	background-image:url(../assets/image/w1.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.warning5 {
+	display: inline-block;
+    width: 16px;
+	height:16px;
+	background-image:url(../assets/image/w2.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.warning6 {
+	display: inline-block;
+    width: 16px;
+	height:16px;
+	background-image:url(../assets/image/w3.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+/**
+替换仪表盘 vue-grid-layout 的样式
+**/
+.vue-grid-item>.vue-resizable-handle {
+    background: url(../assets/image/wingrip.png) !important;
+    width: 16px !important;
+    height: 16px !important;
+    display: none;
+}
+.vue-grid-item:hover > .vue-resizable-handle{
+    display: block !important;
+}
+.dimfilterpanel {
+	.el-drawer__body {
+		height: calc(100% - 40px) !important;
+	}
+}
+.ibox  {
+    .ui-resizable-s {
+        height:18px;
+        background-image: url(../assets/image/wingrip.png);
+        background-position: right;
+        background-repeat: no-repeat;
+    }
+}
+button.minibtn :hover {
+    color:#409EFF;
+}
+.context-menu-input>label>* {
+    vertical-align: inherit !important;
+    font-weight: normal;
+}
+/**
+地图的 black 类型的 样式风格
+*/
+.chart-tooltip-black {
+    border: solid 2px #26478c !important;
+    background-color: #051134 !important;
+    color: #3a67e0 !important;
+    width: 500px;
+    height: 120px;
+    font-size: 16px;
+    z-index: 9999 !important;
+    div {
+        background-color: #051134 !important;
+    }
+    b {
+        font-size: 20px;
+        color: white;
+    }
+    ul {
+        margin: 0;
+        padding: 0;
+        li {
+            list-style-type: none;
+            width: 50%;
+            float: left;
+            span.header {
+                display: inline-block;
+                width: 40%;
+            }
+            span.data {
+                font-size: 18px;
+                color: #FFFFFF;
+                display: inline-block;
+                width: 40%;
+                text-align: right;
+                padding: 8px;
+            }
+        }
+    }
+}
+
+.jstree-default-contextmenu {
+    z-index: 9999 !important;
+}

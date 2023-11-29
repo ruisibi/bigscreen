@@ -1,0 +1,1 @@
+select count(rid) as d1 from (SELECT * FROM ruisi.rs_logs) tt where 1=1   

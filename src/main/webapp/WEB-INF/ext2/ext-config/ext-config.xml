@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ext-config>
+	<constant name="devMode" value="true" />
+	<!-- 百度地图的AK， 此AK只做测试使用，企业客户请申请自己的AK -->
+	<constant name="baiduMapAK" value=""/>
+	<constant name="resPath" value="https://www.ruisitech.com/rsbi-ultimate/" />
+	<constant name="xmlResource" value="/WEB-INF/ext2/ext-config/pages/" />
+	<constant name="securityClass" value="com.ruisitech.ext.service.ExtLoginChecker"/>
+	<constant name="loginUserClass" value="com.ruisitech.ext.service.ExtLoginInfoLoader"/>
+	<constant name="fieldLoader" value="com.ruisitech.ext.service.MyCrossFieldLoader" />
+	<constant name="OlapWriter" value="com.ruisitech.ext.service.UserDefinedOlapWriter"/>
+	<constant name="mvGetLoader" value="com.ruisitech.ext.service.LoadXmlFromDB"/>
+	<constant name="buildInter" value="com.ruisitech.ext.service.MVSecurity"/>
+	<constant name="userUtils" value="com.ruisitech.ext.service.MyEnvirContext"/>
+	<constant name="daoProvider" value="com.ruisitech.ext.service.SpringBootDaoProvider"/>
+
+	<chart shape="line" class="com.rsbi.ext.engine.view.emitter.chart.echarts.LineChart"/>
+	<chart shape="area" class="com.rsbi.ext.engine.view.emitter.chart.echarts.AreaChart"/>
+	<chart shape="bar" class="com.rsbi.ext.engine.view.emitter.chart.echarts.BarChart"/>
+	<chart shape="bubble" class="com.rsbi.ext.engine.view.emitter.chart.echarts.BubbleChart"/>
+	<chart shape="column" class="com.rsbi.ext.engine.view.emitter.chart.echarts.ColumnChart"/>
+	<chart shape="gauge" class="com.rsbi.ext.engine.view.emitter.chart.echarts.GaugeChart"/>
+	<chart shape="gauge2" class="com.rsbi.ext.engine.view.emitter.chart.echarts.GaugeChart2"/>
+	<chart shape="mgauge" class="com.rsbi.ext.engine.view.emitter.chart.echarts.GaugeChart3"/>
+	<chart shape="map" class="com.rsbi.ext.engine.view.emitter.chart.echarts.MapChart"/>
+	<chart shape="nestingPie" class="com.rsbi.ext.engine.view.emitter.chart.echarts.NestingPieChart"/>
+	<chart shape="pie" class="com.rsbi.ext.engine.view.emitter.chart.echarts.PieChart"/>
+	<chart shape="pie2" class="com.rsbi.ext.engine.view.emitter.chart.echarts.PieChart2"/>
+	<chart shape="radar" class="com.rsbi.ext.engine.view.emitter.chart.echarts.RadarChart"/>
+	<chart shape="scatter" class="com.rsbi.ext.engine.view.emitter.chart.echarts.ScatterChart"/>
+	<chart shape="scatterMap" class="com.rsbi.ext.engine.view.emitter.chart.echarts.ScatterMapChart"/>
+	<chart shape="wordcloud" class="com.rsbi.ext.engine.view.emitter.chart.echarts.WordCloudChart"/>
+	<chart shape="funnel" class="com.rsbi.ext.engine.view.emitter.chart.echarts.FunnelChart"/>
+	<chart shape="treeMap" class="com.rsbi.ext.engine.view.emitter.chart.echarts.TreeMapChart"/>
+	<chart shape="liquidFill" class="com.rsbi.ext.engine.view.emitter.chart.echarts.LiquidFillChart"/>
+	<chart shape="sexProportion" class="com.rsbi.ext.engine.view.emitter.chart.echarts.SexProportionChart"/>
+	<chart shape="baiduMap" class="com.rsbi.ext.engine.view.emitter.chart.echarts.BaiduMapChart"/>
+	<chart shape="sankey" class="com.rsbi.ext.engine.view.emitter.chart.echarts.SankeyChart"/>
+	<chart shape="capsule" class="com.rsbi.ext.engine.view.emitter.chart.echarts.CapsuleChart"/>
+	<chart shape="map3D" class="com.rsbi.ext.engine.view.emitter.chart.echarts.Map3DChart"/>
+	<chart shape="heatMap" class="com.rsbi.ext.engine.view.emitter.chart.echarts.HeatMapChart"/>
+
+	<!-- 自定义图形 -->
+	<chart shape="bar3" class="com.ruisitech.ext.chart.Bar3Chart"/>
+	<chart shape="pie3" class="com.ruisitech.ext.chart.Pie3Chart"/>
+	<chart shape="bar4" class="com.ruisitech.ext.chart.Bar4Chart"/>
+	<chart shape="column3" class="com.ruisitech.ext.chart.Column3Chart" />
+	<chart shape="map2" class="com.ruisitech.ext.chart.Map2Chart" />
+
+	<db type="oracle" class="com.rsbi.ext.engine.dao.OracleHelperImpl"/>
+	<db type="mysql" class="com.rsbi.ext.engine.dao.MysqlHelperImpl"/>
+	<db type="sqlser" class="com.rsbi.ext.engine.dao.SqlServerHelperImpl"/>
+	<db type="db2" class="com.rsbi.ext.engine.dao.Db2HelperImpl"/>
+	<db type="hive" class="com.rsbi.ext.engine.dao.HiveHelperImpl"/>
+	<db type="kylin" class="com.rsbi.ext.engine.dao.KylinHelperImpl"/>
+	<db type="psql" class="com.rsbi.ext.engine.dao.PostgresqlHelperImpl"/>
+	<db type="sqlite" class="com.rsbi.ext.engine.dao.SqliteHelperImpl"/>
+	<db type="dm" class="com.rsbi.ext.engine.dao.DmHelperImpl"/>
+	<db type="clickhouse" class="com.rsbi.ext.engine.dao.ClickHouseHelperImpl"/>
+
+	<service id="ext.sys.param.cascade" class="com.rsbi.ext.engine.service.impl.ParameterCascadeServiceImpl" result="global"/>
+	<service id="ext.sys.fenye.ajax" class="com.rsbi.ext.engine.service.impl.AjaxFenyeServiceImpl" result="global"/>
+	<service id="ext.sys.tab.ajax" class="com.rsbi.ext.engine.service.impl.TabAjaxService" result="global"/>
+	<service id="ext.sys.export" class="com.rsbi.ext.engine.service.impl.ExportServiceImpl" result="global"/>
+	<service id="ext.sys.chart.rebuild" class="com.rsbi.ext.engine.service.impl.ChartRebuildServiceImpl" result="global"/>
+	<service id="ext.sys.cross.loadData" class="com.rsbi.ext.engine.service.impl.CrossDataLoadServiceImpl" result="global"/>
+	<service id="ext.sys.cross.rebuild" class="com.rsbi.ext.engine.service.impl.CrossRebuildServiceImpl" result="global"/>
+	<service id="ext.sys.emitter.text" class="com.rsbi.ext.engine.service.impl.TextEmitterServiceImpl" result="global"/>
+	<service id="ext.sys.cross.export" class="com.rsbi.ext.engine.service.impl.CrossExportServiceImpl" result="global"/>
+	<service id="ext.sys.mv.export" class="com.rsbi.ext.engine.service.impl.MVExportServiceImpl" result="global"/>
+	<service id="ext.sys.gridreport.rebuild" class="com.rsbi.ext.engine.service.impl.GridReportRebuildImpl" result="global"/>
+	<!-- 配置项目信息  -->
+	<constant name="sys.productName" value="睿思BI数据大屏"/>
+	<!-- 配置log图片的绝对地址,http 开头 -->
+	<constant name="sys.login.log" value=""/>
+	<constant name="sys.companyName" value="成都睿思商智科技有限公司"/>
+	<!-- 是否显示首页产品列表 -->
+	<constant name="sys.Login.products" value="y"/>
+</ext-config>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.bireport.OlapMapper">
+
+	<select id="getQueryTable" resultType="com.ruisitech.bi.entity.bireport.TableInfoVO">
+	   select c.table_id as "tid", c.table_name "tname", c.table_sql "sql", use_es "useEs" , es_enable "esEnable",
+	   data_control_col as "dataControlCol", income, d.table_type as "tableType",  c.rest_data_proc as "restDataProc",
+	   rest_url as "restUrl", rest_url_bak as "restUrlBak", rest_post_type "restPostType", rest_data_key as "restDataKey", rest_params as "restParams",
+	   d.kpi_code_column as "kpiCodeColumn", d.kpi_name_column as "kpiNameColumn", d.kpi_value_column as  "kpiValueColumn",
+	   c.dsource as "dsourceId", c.rest_total_key as "restTotalKey", es_url as "esUrl", es_uname as "esUname", es_psd "esPsd", es_version as "esVersion"
+	   from etl_src_meta c left join olap_table_meta d on c.table_id = d.tid
+	   where table_id = #{tid}
+	</select>
+
+	<!-- 查询所有列 -->
+	<select id="getQueryTableCols" resultType="com.ruisitech.bi.entity.etl.EtlTableMetaCol">
+	  	select col_id as "colId", col_name as "colName" , col_type as "colType", expression as "expression", es_keyword as "esKeyword"
+		from etl_src_col_meta where table_id = #{tid}
+		order by col_ord
+	</select>
+
+	<!-- 查询立方体表字段和别名 -->
+	<select id="getCubeCols" resultType="java.util.HashMap">
+	  	SELECT col_name as "cName", alias FROM olap_table_col_meta where tid = #{tid}
+	</select>
+
+	<select id="getKpisAlias" resultType="java.util.HashMap">
+		select alias as "alias", aggre as "aggre", distinct_col as "distinctCol", from_col as "fromCol"
+		from olap_table_col_meta a, olap_kpi_list b
+		where a.col_id = b.rid and a.tid = #{tid} and a.COL_TYPE = 2
+	</select>
+</mapper>

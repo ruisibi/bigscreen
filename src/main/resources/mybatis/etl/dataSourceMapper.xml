@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.etl.DataSourceMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruisitech.bi.entity.etl.DataSource">
+		<id column="id" property="id"/>
+		<result column="uname" property="uname"/>
+		<result column="psd" property="psd"/>
+		<result column="dbname" property="database"/>
+		<result column="ipaddress" property="ipAddress"/>
+		<result column="ipport" property="ipPort"/>
+		<result column="linkType" property="linkType"/>
+		<result column="crtuser" property="crtuser"/>
+		<result column="name" property="name"/>
+		<result column="ext_params" property="extParams"/>
+    </resultMap>
+
+    <select id="listDataSource" resultMap="BaseResultMap" parameterType="com.ruisitech.bi.entity.etl.DataSource">
+		select id, name, linktype , ipaddress ,
+		ipport , dbname , uname , psd, ext_params
+		from etl_datasource
+		where 1=1
+		<if test="crtuser != null">
+			and crtuser = #{crtuser}
+		</if>
+	</select>
+
+    <insert id="insertDataSource" parameterType="com.ruisitech.bi.entity.etl.DataSource">
+    	insert into etl_datasource(id,name,linktype,ipaddress,ipport,dbname,uname,psd, ext_params, crtuser)
+		values(#{id}, #{name}, #{linkType}, #{ipAddress}, #{ipPort}, #{database}, #{uname}, #{psd} , #{extParams}, #{crtuser})
+    </insert>
+
+	<update id="updateDataSource" parameterType="com.ruisitech.bi.entity.etl.DataSource">
+		update etl_datasource
+		set name = #{name}, linktype = #{linkType}, ipaddress = #{ipAddress}, ipport = #{ipPort},
+		dbname = #{database}, uname = #{uname}, psd = #{psd}, ext_params = #{extParams}
+		where id = #{id}
+	</update>
+
+    <delete id="delDataSource" parameterType="com.ruisitech.bi.entity.etl.DataSource">
+		delete from etl_datasource where id = #{id}
+	</delete>
+
+	<select id="maxDataSourceid" resultType="java.lang.Integer">
+		select case WHEN max(id) is null then 1 else  max(id) + 1 end "rid" from etl_datasource
+	</select>
+
+	<select id="selectDataSourceByPrimaryKey" resultMap="BaseResultMap">
+		select id, name, linktype , ipaddress ,
+		ipport , dbname , uname , psd, ext_params
+		from etl_datasource where id = #{id}
+	</select>
+
+	<select id="linkExist" resultType="java.lang.Integer" parameterType="com.ruisitech.bi.entity.etl.DataSource">
+		select count(*) from etl_datasource where
+		ipaddress=#{ipAddress} and ipport = #{ipPort} and dbname = #{database} and uname = #{uname}
+		<if test="crtuser != null">
+			and crtuser = #{crtuser}
+		</if>
+	</select>
+
+</mapper>

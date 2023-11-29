@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.model.TableDimensionMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruisitech.bi.entity.model.TableDimension">
+		<id column="dim_id" property="dimId"/>
+		<result column="dim_desc" property="name"/>
+		<result column="dim_type" property="type"/>
+		<result column="col_key" property="colkey"/>
+		<result column="col_id" property="colId"/>
+		<result column="col_type" property="colType"/>
+		<result column="col_name" property="coltext"/>
+		<result column="dim_ord" property="dimord"/>
+		<result column="key_val_type" property="vtype"/>
+		<result column="ordcol" property="ordcol"/>
+		<result column="tid" property="tid"/>
+		<result column="tname" property="tname"/>
+		<result column="table_sql" property="tsql"/>
+		<result column="group_type" property="groupId"/>
+		<result column="group_name" property="groupName"/>
+		<result column="dateformat" property="dateformat"/>
+		<result column="from_col" property="fromCol"/>
+		<result column="olap_cube_col_meta_col_name" property="col"/>
+		<result column="ispcdim" property="ispcdim"/>
+		<result column="pc_id" property="pcId"/>
+		<result column="pc_pid" property="pcPid"/>
+		<result column="pcdimlevel" property="pcdimlevel"/>
+		<result column="level_col" property="levelCol"/>
+    </resultMap>
+
+    <!-- 用在多维查询中，封装维度dto -->
+     <resultMap id="dimDtoMap" type="com.ruisitech.bi.entity.bireport.DimDto">
+		<id column="dim_id" property="id"/>
+		<result column="dim_desc" property="dimdesc"/>
+		<result column="dim_type" property="type"/>
+		<result column="alias" property="alias"/>
+		<result column="col_key" property="tableColKey"/>
+		<result column="col_name" property="tableColName"/>
+		<result column="dim_ord" property="dimord"/>
+		<result column="key_val_type" property="valType"/>
+		<result column="ordcol" property="ordcol"/>
+		<result column="tid" property="tid"/>
+		<result column="tname" property="tname"/>
+		<result column="group_type" property="grouptype"/>
+		<result column="group_name" property="groupname"/>
+		<result column="dateformat" property="dateformat"/>
+		<result column="from_col" property="fromCol"/>
+		<result column="olap_cube_col_meta_col_name" property="colname"/>
+		<result column="ispcdim" property="ispcdim"/>
+		<result column="pc_id" property="pcId"/>
+		<result column="pc_pid" property="pcPid"/>
+		<result column="pcdimlevel" property="pcdimlevel"/>
+		<result column="level_col" property="levelCol"/>
+    </resultMap>
+
+    <select id="queryDimCol" resultMap="BaseResultMap">
+		select a.COL_NAME as "olap_cube_col_meta_col_name", b.TNAME , c.col_key , c.col_name , c.dim_type , a.alias, c.from_col, c.KEY_VAL_TYPE,
+		 dim_ord , ordcol , d.table_sql, c.ispcdim, c.pc_id, c.pc_pid, c.pcdimlevel,  c.level_col, c.dateformat
+		from olap_table_col_meta a, olap_table_meta b, olap_dim_list  c, etl_src_meta d
+		 where a.TID = b.TID and COL_TYPE = 1 and a.col_id = c.dim_id and b.tid = d.table_id and COL_ID = #{dimId} and a.TID = #{tid}
+	</select>
+
+	<select id="findDimensionByAlias" resultMap="BaseResultMap">
+		select  c.*, a.col_name as olap_cube_col_meta_col_name
+		from olap_table_col_meta a, olap_dim_list  c
+		 where COL_TYPE = 1 and a.col_id = c.dim_id and alias = #{alias} and a.TID = #{tid}
+	</select>
+
+    <insert id="insertDim" parameterType="com.ruisitech.bi.entity.model.TableDimension">
+		insert into olap_dim_list(
+			<if test="idType == 2">dim_id,</if>
+			dim_desc,
+			dim_type
+			<if test="colkey != null" >
+				,col_key
+			</if>
+			<if test="coltext != null ">
+				,col_name
+			</if>
+			<if test="dimord != null ">
+				,dim_ord
+			</if>
+			<if test="vtype != null ">
+			   ,key_val_type
+			</if>
+			<if test="ordcol != null ">
+				,ordcol
+			</if>
+			<if test="groupId != null ">
+				,group_type
+			</if>
+			<if test="dateformat != null ">
+				,dateformat
+			</if>
+			<if test="fromCol != null ">
+				,from_col
+			</if>
+			<if test="ispcdim != null ">
+				,ispcdim
+			</if>
+			<if test="pcId != null ">
+				,pc_id
+			</if>
+			<if test="pcPid != null ">
+				,pc_pid
+			</if>
+			<if test="pcdimlevel != null ">
+				,pcdimlevel
+			</if>
+			<if test="levelCol != null ">
+				,level_col
+			</if>
+			, tid
+			)
+		values(
+			<if test="idType == 2">#{dimId},</if>
+			#{name},
+			#{type}
+			<if test="colkey != null ">
+				,#{colkey}
+			</if>
+			<if test="coltext != null ">
+				,#{coltext}
+			</if>
+			<if test="dimord != null ">
+				,#{dimord}
+			</if>
+			<if test="vtype != null ">
+				,#{vtype}
+			</if>
+			<if test="ordcol != null ">
+				,#{ordcol}
+			</if>
+			<if test="groupId != null ">
+				,#{groupId}
+			</if>
+			<if test="dateformat != null ">
+				,#{dateformat}
+			</if>
+			<if test="fromCol != null ">
+				,#{fromCol}
+			</if>
+			<if test="ispcdim != null ">
+				,#{ispcdim}
+			</if>
+			<if test="pcId != null ">
+				,#{pcId}
+			</if>
+			<if test="pcPid != null ">
+				,#{pcPid}
+			</if>
+			<if test="pcdimlevel != null ">
+				,#{pcdimlevel}
+			</if>
+			<if test="levelCol != null ">
+				,#{levelCol}
+			</if>
+			, #{tid}
+			)
+	</insert>
+
+	<update id="updateDimByFromcol" parameterType="com.ruisitech.bi.entity.model.TableDimension">
+		update olap_dim_list
+			set key_val_type = #{vtype}
+			where tid = #{tid} and from_col = #{fromCol}
+	</update>
+
+	<update id="updateDim" parameterType="com.ruisitech.bi.entity.model.TableDimension">
+		update olap_dim_list
+			set dim_desc=#{name},
+			dim_type=#{type}
+			<if test="colkey != null ">
+				,col_key=#{colkey}
+			</if>
+			<if test="coltext != null ">
+				,col_name=#{coltext}
+			</if>
+			<if test="dimord != null ">
+				,dim_ord=#{dimord}
+			</if>
+			<if test="vtype != null ">
+				,key_val_type=#{vtype}
+			</if>
+			<if test="ordcol != null ">
+				,ordcol=#{ordcol}
+			</if>
+			<if test="groupId != null ">
+				,group_type=#{groupId}
+			</if>
+			<if test="dateformat != null ">
+				,dateformat=#{dateformat}
+			</if>
+			<if test="fromCol != null ">
+				,from_col=#{fromCol}
+			</if>
+			<if test="ispcdim != null ">
+				,ispcdim=#{ispcdim}
+			</if>
+			<if test="pcId != null ">
+				,pc_id=#{pcId}
+			</if>
+			<if test="pcPid != null ">
+				,pc_pid=#{pcPid}
+			</if>
+			<if test="pcdimlevel != null ">
+				,pcdimlevel=#{pcdimlevel}
+			</if>
+			<if test="levelCol != null ">
+				,level_col=#{levelCol}
+			</if>
+		where dim_id = #{targetId} and tid = #{tid}
+	</update>
+
+
+	<delete id="deleteDim" parameterType="com.ruisitech.bi.entity.model.TableDimension">
+		delete from olap_dim_list where tid = #{tid}
+		<if test = "dimId != null">
+			and dim_id = #{dimId}
+		</if>
+	</delete>
+
+   <select id="getMaxDimId" resultType="java.lang.Integer">
+ 	  select case WHEN max(dim_id) is null then 1 else  max(dim_id) + 1 end "rid" from olap_dim_list
+   </select>
+
+   <insert id="insertGroup" parameterType="com.ruisitech.bi.entity.model.TableDimension">
+   		insert into olap_dim_group(group_id, group_name,
+   		<if test=" ord != null ">
+   		ord,
+   		</if>
+   		tid)
+		values(#{groupId}, #{groupName},
+		<if test=" ord != null ">
+		#{ord},
+		</if>
+		 #{tid})
+   </insert>
+
+   <delete id="deleteGroupById" parameterType="java.lang.String">
+   		delete from olap_dim_group where group_id = #{groupId}
+   </delete>
+
+   <delete id="deleteGroupByTid" parameterType="java.lang.Integer">
+   		delete from olap_dim_group where tid = #{tid}
+   </delete>
+
+   <select id="listGroup" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select group_id from olap_dim_group where tid = #{tid}
+	</select>
+
+	<select id="getTableDims" resultMap="dimDtoMap">
+		select a.rid,
+       a.tid ,
+       a.col_type,
+       a.col_id ,
+       a.col_name as "olap_cube_col_meta_col_name",
+       b.dim_desc,
+       c.tname ,
+       c.tdesc ,
+       alias ,
+       dim_type ,
+       b.dim_id,
+       b.dim_tname ,
+       b.col_key ,
+       b.col_name ,
+       a.ord ,
+       dim_ord ,
+       b.group_type ,
+       d.group_name ,
+       b.key_val_type,
+       a.alias as ordcol,
+       b.dateformat,
+       b.from_col,
+       b.ispcdim,
+       b.pc_id,
+       b.pc_pid,
+       b.pcdimlevel,
+       b.level_col
+	  from olap_table_col_meta a
+	  join olap_dim_list b
+	    on a.col_id = b.dim_id
+	  join olap_table_meta c
+	    on a.tid = c.tid
+	  left join olap_dim_group d
+	    on b.group_type = d.group_id
+	 where a.tid = #{tid}
+	   and a.col_type = 1
+	 order by a.ord
+	</select>
+</mapper>

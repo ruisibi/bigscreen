@@ -1,0 +1,1 @@
+select kpi_id k6, kpi_name k62,sum(kpi_value) d5 from dcdb_tongji where 1=1   group by kpi_id, kpi_name

@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruisitech.bi.mapper.etl.EtlTableMetaColMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruisitech.bi.entity.etl.EtlTableMetaCol">
+		 <id column="col_id" property="colId" />
+	    <result column="col_name" property="colName" />
+	    <result column="col_type" property="colType"/>
+	    <result column="col_length" property="colLength"/>
+	    <result column="col_scale" property="colScale"/>
+	    <result column="col_note" property="colNote" />
+	    <result column="col_ord" property="colOrd"  />
+	    <result column="company_id" property="companyId" />
+	    <result column="table_id" property="tableId" />
+	    <result column="expression" property="expression"  />
+	    <result column="input_type" property="inputType"/>
+	    <result column="defvalue" property="defvalue"  />
+	    <result column="col_desc" property="colDesc"  />
+	    <result column="options" property="options"  />
+	    <result column="valuestype" property="valuestype"  />
+	    <result column="match_table" property="matchTable" />
+	    <result column="match_col" property="matchCol"  />
+	    <result column="use_col" property="useCol" />
+	    <result column="update_col" property="updateCol"  />
+	    <result column="t_condition" property="tCondition"  />
+	    <result column="match_col_text" property="matchColText"  />
+	    <result column="income_tname" property="incomeTname"  />
+	    <result column="from_col" property="fromCol"  />
+	    <result column="required" property="required"  />
+	    <result column="search_col" property="searchCol"  />
+		<result column="es_keyword" property="esKeyword" />
+   </resultMap>
+
+   <select id="queryTableColumns" resultMap="BaseResultMap">
+		select col_id, col_name, col_type, col_length, col_note , col_ord , table_id, input_type, defvalue, col_desc, options, valuestype,expression , t_condition  ,
+		match_table, match_col, use_col, update_col, match_col_text, income_tname, col_scale, col_name as from_col,required,search_col, es_keyword
+		from etl_src_col_meta where table_id = #{tableId}
+		<if test="colId != null">
+			and col_id = #{colId}
+		</if>
+		order by col_ord
+	</select>
+
+	<!-- 查询没有表达式的字段列表 -->
+ 	<select id="queryTableColumnsNotExpress" resultMap="BaseResultMap">
+		select col_id, col_name, col_type, col_length, col_note , col_ord , table_id, input_type, defvalue, col_desc, options, valuestype,expression , t_condition  ,
+		match_table, match_col, use_col, update_col, match_col_text,income_tname, col_scale, col_name as from_col,required,search_col, es_keyword
+		from etl_src_col_meta where table_id = #{tableId} and (expression is null or expression = '')
+		order by col_ord
+	</select>
+
+	<!-- 查询没有表达式的字段列表 -->
+ 	<select id="queryTableColumnsOnlyExpress" resultMap="BaseResultMap">
+		select col_id, col_name, col_type, col_length, col_note , col_ord , table_id, input_type, defvalue, col_desc, options, valuestype,expression , t_condition  ,
+		match_table, match_col, use_col, update_col, match_col_text,income_tname, col_scale, col_name as from_col,required,search_col, es_keyword
+		from etl_src_col_meta where table_id = #{tableId} and (expression is not null or expression != '')
+		order by col_ord
+	</select>
+
+	<select id="maxColId" resultType="java.lang.Integer">
+		select case WHEN max(col_id) is null then 1 else  max(col_id) + 1 end "rid" from etl_src_col_meta
+	</select>
+
+	<delete id="delTableColByTableId" parameterType="com.ruisitech.bi.entity.etl.EtlTableMeta">
+		delete from etl_src_col_meta where table_id = #{tableId}
+	</delete>
+
+	<delete id="delTableColByTableIdNotExpress" parameterType="com.ruisitech.bi.entity.etl.EtlTableMeta">
+		delete from etl_src_col_meta where table_id = #{tableId} and expression is null
+	</delete>
+
+	<delete id="delTableColById">
+		delete from etl_src_col_meta where col_id = #{colId}
+	</delete>
+
+	<insert id="insertMetaTableCol" parameterType="com.ruisitech.bi.entity.etl.EtlTableMetaCol">
+		insert into etl_src_col_meta
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="idType == 2" >
+	        col_id,
+	      </if>
+	      <if test="colName != null" >
+	        col_name,
+	      </if>
+	      <if test="colType != null" >
+	        col_type,
+	      </if>
+	      <if test="colLength != null" >
+	        col_length,
+	      </if>
+	      <if test="colScale != null" >
+	        col_scale,
+	      </if>
+	      <if test="colNote != null" >
+	        col_note,
+	      </if>
+	      <if test="colOrd != null" >
+	        col_ord,
+	      </if>
+	      <if test="companyId != null" >
+	        company_id,
+	      </if>
+	      <if test="tableId != null" >
+	        table_id,
+	      </if>
+	      <if test="expression != null" >
+	        expression,
+	      </if>
+	      <if test="inputType != null" >
+	        input_type,
+	      </if>
+	      <if test="defvalue != null" >
+	        defvalue,
+	      </if>
+	      <if test="colDesc != null" >
+	        col_desc,
+	      </if>
+	      <if test="options != null" >
+	        options,
+	      </if>
+	      <if test="valuestype != null" >
+	        valuestype,
+	      </if>
+	      <if test="matchTable != null" >
+	        match_table,
+	      </if>
+	      <if test="matchCol != null" >
+	        match_col,
+	      </if>
+	      <if test="useCol != null" >
+	        use_col,
+	      </if>
+	      <if test="updateCol != null" >
+	        update_col,
+	      </if>
+	      <if test="tCondition != null" >
+	        t_condition,
+	      </if>
+	      <if test="matchColText != null" >
+	        match_col_text,
+	      </if>
+	      <if test="incomeTname != null" >
+	        income_tname,
+	      </if>
+	      <if test="required != null" >
+	        required,
+	      </if>
+	      <if test="searchCol != null" >
+	        search_col,
+	      </if>
+			<if test="esKeyword != null">
+				es_keyword,
+			</if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="idType == 2" >
+	        #{colId},
+	      </if>
+	      <if test="colName != null" >
+	        #{colName},
+	      </if>
+	      <if test="colType != null" >
+	        #{colType},
+	      </if>
+	      <if test="colLength != null" >
+	        #{colLength},
+	      </if>
+	      <if test="colScale != null" >
+	        #{colScale},
+	      </if>
+	      <if test="colNote != null" >
+	        #{colNote},
+	      </if>
+	      <if test="colOrd != null" >
+	        #{colOrd},
+	      </if>
+	      <if test="companyId != null" >
+	        #{companyId},
+	      </if>
+	      <if test="tableId != null" >
+	        #{tableId},
+	      </if>
+	      <if test="expression != null" >
+	        #{expression},
+	      </if>
+	      <if test="inputType != null" >
+	        #{inputType},
+	      </if>
+	      <if test="defvalue != null" >
+	        #{defvalue},
+	      </if>
+	      <if test="colDesc != null" >
+	        #{colDesc},
+	      </if>
+	      <if test="options != null" >
+	        #{options},
+	      </if>
+	      <if test="valuestype != null" >
+	        #{valuestype},
+	      </if>
+	      <if test="matchTable != null" >
+	        #{matchTable},
+	      </if>
+	      <if test="matchCol != null" >
+	        #{matchCol},
+	      </if>
+	      <if test="useCol != null" >
+	        #{useCol},
+	      </if>
+	      <if test="updateCol != null" >
+	        #{updateCol},
+	      </if>
+	      <if test="tCondition != null" >
+	        #{tCondition},
+	      </if>
+	      <if test="matchColText != null" >
+	        #{matchColText},
+	      </if>
+	      <if test="incomeTname != null" >
+	        #{incomeTname},
+	      </if>
+	      <if test="required != null" >
+	        #{required},
+	      </if>
+	      <if test="searchCol != null" >
+	        #{searchCol},
+	      </if>
+			<if test="esKeyword != null">
+				#{esKeyword},
+			</if>
+	    </trim>
+	</insert>
+
+	<update id="updateTableCol" parameterType="com.ruisitech.bi.entity.etl.EtlTableMetaCol" >
+	    update etl_src_col_meta
+	    <set >
+	      <if test="colName != null" >
+	        col_name = #{colName},
+	      </if>
+	      <if test="colType != null" >
+	        col_type = #{colType},
+	      </if>
+	      <if test="colLength != null" >
+	        col_length = #{colLength},
+	      </if>
+	      <if test="colScale != null" >
+	        col_scale = #{colScale},
+	      </if>
+	      <if test="colNote != null" >
+	        col_note = #{colNote},
+	      </if>
+	      <if test="colOrd != null" >
+	        col_ord = #{colOrd},
+	      </if>
+	      <if test="companyId != null" >
+	        company_id = #{companyId},
+	      </if>
+	      <if test="tableId != null" >
+	        table_id = #{tableId},
+	      </if>
+	      <if test="expression != null" >
+	        expression = #{expression},
+	      </if>
+	      <if test="inputType != null" >
+	        input_type = #{inputType},
+	      </if>
+	      <if test="defvalue != null" >
+	        defvalue = #{defvalue},
+	      </if>
+	      <if test="colDesc != null" >
+	        col_desc = #{colDesc},
+	      </if>
+	      <if test="options != null" >
+	        options = #{options},
+	      </if>
+	      <if test="valuestype != null" >
+	        valuestype = #{valuestype},
+	      </if>
+	      <if test="matchTable != null" >
+	        match_table = #{matchTable},
+	      </if>
+	      <if test="matchCol != null" >
+	        match_col = #{matchCol},
+	      </if>
+	      <if test="useCol != null" >
+	        use_col = #{useCol},
+	      </if>
+	      <if test="updateCol != null" >
+	        update_col = #{updateCol},
+	      </if>
+	      <if test="tCondition != null" >
+	        t_condition = #{tCondition},
+	      </if>
+	      <if test="matchColText != null" >
+	        match_col_text = #{matchColText},
+	      </if>
+	      <if test="incomeTname != null" >
+	        income_tname = #{incomeTname},
+	      </if>
+	      <if test="required != null" >
+	        required = #{required},
+	      </if>
+	      <if test="searchCol != null" >
+	        search_col = #{searchCol},
+	      </if>
+			<if test="esKeyword != null">
+				es_keyword = #{esKeyword},
+			</if>
+	    </set>
+	    where col_id = #{colId}
+	  </update>
+
+	<select id="getComboCol" resultMap="BaseResultMap" parameterType="com.ruisitech.bi.entity.etl.EtlTableMetaCol">
+		select b.match_table, b.match_col, b.match_col_text, b.use_col, b.update_col, b.t_condition
+		from etl_src_meta a, etl_src_col_meta b
+		where a.table_id = b.table_id and a.table_id = #{tableId} and b.col_id = #{colId}
+	</select>
+
+	<!-- 返回  DSColumn 类型 字段列表的 sql-->
+	<select id="queryColumnsRetDsColumn" resultType="com.ruisitech.bi.entity.common.DSColumn">
+		select a.col_note as "dispName", a.col_ord "idx", col_length as "length", col_name as "name", b.table_name as "tname", col_type as "type", expression as "expression"
+		from etl_src_col_meta a, etl_src_meta b
+		where a.table_id = b.table_id and b.table_id = #{tableId}
+		order by col_ord
+	</select>
+
+	<update id="updDimExpressByFromCol" parameterType="com.ruisitech.bi.entity.etl.EtlTableMetaCol">
+		update olap_table_col_meta set col_name = #{expression} where rid in (
+			select rid from (
+				select c.rid from olap_table_col_meta c, olap_dim_list a
+				where c.tid = #{tableId} and col_type = 1 and a.dim_id = c.col_id and from_col = #{colName}
+			) cc
+		)
+	</update>
+
+	<update id="updKpiExpressByFromCol" parameterType="com.ruisitech.bi.entity.etl.EtlTableMetaCol">
+		update olap_table_col_meta set col_name = #{expression} where rid in (
+			select rid from (
+				select c.rid from olap_table_col_meta c, olap_kpi_list a
+				where c.tid = #{tableId} and col_type = 2 and a.rid = c.col_id and from_col = #{colName}
+			) cc
+		)
+	</update>
+</mapper>
