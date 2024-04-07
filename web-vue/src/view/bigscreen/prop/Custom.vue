@@ -94,6 +94,37 @@
             <el-input placeholder="[{lon:12, lat:45}]格式"  v-model="prop.lonlatEnd" @change="changevalue('lonlatEnd')"></el-input>
           </el-form-item>
          </el-collapse-item>
+        <el-collapse-item title="动态框配置" name="dynamicbox" v-if="prop.impl == 'dynamicBox'">
+          <el-form-item label="显示方式：" label-width="130px">
+            <el-radio-group v-model="prop.dynamicBoxType"  @change="changevalue('dynamicBoxType')">
+              <el-radio-button label="solid">实线</el-radio-button>
+              <el-radio-button label="dotted">虚线</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="边框颜色：" label-width="210px">
+            <el-color-picker v-model="prop.borderColor" @change="changevalue('borderColor')"></el-color-picker>
+          </el-form-item>
+          <el-form-item label="滚动频率：" label-width="110px">
+            <el-select v-model="prop.frequency" :clearable="true" placeholder="请选择" @change="changevalue('frequency')">
+              <el-option
+                v-for="item in opt.frequencys"
+                :key="item.value"
+                :label="item.text"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="反转滚动：" label-width="210px">
+            <el-switch v-model="prop.switchMove" @change="changevalue('switchMove')"></el-switch>
+          </el-form-item>
+          <el-form-item label="流光颜色：" label-width="210px">
+            <el-color-picker v-model="prop.flyColor" @change="changevalue('flyColor')"></el-color-picker>
+          </el-form-item>
+          <el-form-item label="流光数量：" label-width="115px">
+            <el-input-number :max="20" :min="1" v-model="prop.flycount" @change="changevalue('flycount')"></el-input-number>
+          </el-form-item>
+        </el-collapse-item>
          <el-collapse-item title="位置信息" name="2">
             <posProperties :comp="comp" ref="posPropForm"></posProperties>
        </el-collapse-item>
@@ -151,11 +182,19 @@ export default {
         mapCenter:null, //地图中心经纬度
         mapRate: 550, //地图显示比例
         showAreaName: false,
+
+        dynamicBoxType: null,
+        borderColor: null,
+        frequency: null, //频率
+        switchMove: null,
+        flyColor: null,
+        flycount: null,
       },
       opt:{
         impls:[{value:"kpiline", name:"指标引导线"}, {value:"sector", name:"扇形图"},
-        {value:"earth3d", name:"3D地球"}, {value:"map3d", name:"3D地图"}, {value:"pyramid3d", name:"3D金字塔"}],
+        {value:"earth3d", name:"3D地球"}, {value:"map3d", name:"3D地图"}, {value:"pyramid3d", name:"3D金字塔"}, {value:"dynamicBox", name:"动态框"}],
         fmt:utils.fmtJson,
+        frequencys: [{value:0.05, text:"慢速"}, {value:0.1, text:"适中"}, {value:0.2, text:"快速"}]
       }
     }
   },

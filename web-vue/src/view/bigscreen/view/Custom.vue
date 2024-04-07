@@ -16,10 +16,11 @@ import sector from './impl/Sector'
 import earth3d from './impl/Earth3d'
 import map3d from './impl/Map3D'
 import pyramid3d from './impl/Pyramid3D'
+import dynamicBox from './impl/DynamicBox'
 
 export default {
   components:{
-    kpiLine, sector, earth3d, map3d, pyramid3d
+    kpiLine, sector, earth3d, map3d, pyramid3d, dynamicBox
   },
   data(){
     return {
@@ -74,8 +75,22 @@ export default {
       return h('div', {style:s}, [h('earth3d', {ref:"v_"+comp.id,attrs:{comp:comp, pageInfo:this.pageInfo, useIn:this.useIn, portalParams:this.portalParams, token:this.token,  editor:this.editor}})]);
     }else if(comp.impl == 'map3d'){
       return h('div', {style:s}, [h('map3d', {ref:"v_"+comp.id,attrs:{comp:comp, pageInfo:this.pageInfo, useIn:this.useIn, portalParams:this.portalParams, token:this.token,  editor:this.editor}})]);
-    }else if(comp.impl == 'pyramid3d'){
-      return h('div', {style:s}, [h('pyramid3d', {ref:"v_"+comp.id,attrs:{comp:comp, pageInfo:this.pageInfo, useIn:this.useIn, portalParams:this.portalParams, token:this.token,  editor:this.editor}})]);
+    }else if(comp.impl == 'pyramid3d') {
+      return h('div', {style: s}, [h('pyramid3d', {
+        ref: "v_" + comp.id,
+        attrs: {
+          comp: comp,
+          pageInfo: this.pageInfo,
+          useIn: this.useIn,
+          portalParams: this.portalParams,
+          token: this.token,
+          editor: this.editor
+        }
+      })]);
+    }else if(comp.impl == 'dynamicBox'){
+      return h('div', {style:s}, [h('dynamicBox', {ref:"v_"+comp.id,attrs:{comp:comp, pageInfo:this.pageInfo, useIn:this.useIn, portalParams:this.portalParams, token:this.token,  editor:this.editor}})]);
+    }else{
+      return h('div', {style:s, domProps:{innerHTML:"实现:" + comp.impl+" 不存在。"}});
     }
   },
   mounted(){

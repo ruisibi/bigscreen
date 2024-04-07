@@ -48,22 +48,28 @@ const fragmentShader = `
 							       gl_FragColor = vec4(color,1.0);
 							   }
 			`
-export function createFlyCurve(points, cfg, closed) {
+export function createFlyCurve(points, cfg, closed, reverse) {
 	var curve = new THREE.CatmullRomCurve3(points, closed);
 	// 流光的颜色，三个数字分别代表rgb的值，不过注意，需要除以255
 	// 比如浅绿色的rgb是(0,255,127)，那么这里的Vector3就等于(0,1,127/255)也就是(0,1,0.49803921)
 	//var color = new THREE.Vector3( 0.5999758518718452, 0.7798940272761521, 0.6181903838257632 );
-	var flyLine = initFlyLine( curve, cfg, 5000 );
+	var flyLine = initFlyLine( curve, cfg, 5000 , reverse);
 	return flyLine;
 }
-function initFlyLine( curve, matSetting, pointsNumber ) {
+function initFlyLine( curve, matSetting, pointsNumber, reverse) {
 		var points = curve.getPoints( pointsNumber );
 		var geometry = new THREE.BufferGeometry().setFromPoints( points );
 		const length = points.length;
 		var percents = new Float32Array( length );
-		for (let i = 0; i < points.length; i += 1) {
-			percents[i] = ( i / length );
-		}
+    if(reverse == true){  //反转滚动
+      for (let i = points.length; i >= 0; i -= 1) {
+        percents[points.length - i - 1] = ( i / length );
+      }
+    }else{
+      for (let i = 0; i < points.length ; i += 1) {
+        percents[i] = ( i / length );
+      }
+    }
 		geometry.setAttribute( 'percent', new THREE.BufferAttribute( percents, 1 ) );
 		const lineMaterial = initLineMaterial( matSetting );
 		var flyLine = new THREE.Points( geometry, lineMaterial );
