@@ -9,6 +9,7 @@ import {baseUrl} from '@/common/biConfig'
 import $ from 'jquery'
 import * as utils from '@/view/portal/Utils'
 import * as chartUtils from '@/view/portal/ChartUtils'
+import * as tools from '@/view/bireport/bireportUtils'
 import paramFilter from '@/view/bireport/ParamFilter'
 import kpiFilter from './ChartKpiFilter'
 import mulitKpiProp from './MultiKpiProp'
@@ -67,7 +68,7 @@ export default {
 			xcol = [h('span', {class:"charttip"}, '将度量拖到这里')]
 		}
 		//横轴　
-		let xcolobj = h('div', {class:"ts_h"}, [h('div', '横轴：'), h('div', {attrs:{class:"h_ctx", id:"ycol"}}, xcol)]);
+		let xcolobj = h('div', {class:"ts_h"}, [h('div', {class:"h_tit"}, '横轴'), h('div', {attrs:{class:"h_ctx", id:"ycol"}}, xcol)]);
 		leftCols.push(xcolobj);
 
 		let ycol = null;
@@ -77,7 +78,7 @@ export default {
 		}else{
 			ycol = [h('span', {class:"charttip"}, '将度量拖到这里')]
 		}
-		let ycolobj = h('div', {class:"ts_h"}, [h('div', '纵轴'), h('div', {attrs:{class:"h_ctx", id:"y2col"}}, ycol)]);
+		let ycolobj = h('div', {class:"ts_h"}, [h('div', {class:"h_tit"}, '纵轴'), h('div', {attrs:{class:"h_ctx", id:"y2col"}}, ycol)]);
 		leftCols.push(ycolobj);
 
 		//气泡大小
@@ -89,7 +90,7 @@ export default {
 			}else{
 				qp = [h('span', {class:"charttip"}, '将度量拖到这里')]
 			}
-			let qpobj = h('div', {class:"ts_h"}, [h('div', '气泡大小'), h('div', {attrs:{class:"h_ctx", id:"y3col"}}, qp)]);
+			let qpobj = h('div', {class:"ts_h"}, [h('div', {class:"h_tit"}, '气泡大小'), h('div', {attrs:{class:"h_ctx", id:"y3col"}}, qp)]);
 			leftCols.push(qpobj);
 		}
 	}
@@ -102,7 +103,7 @@ export default {
 	}else{
 		xcol = [h('span', {class:"charttip"}, '将维度拖到这里')]
 	}
-	let xcolobj = h('div', {class:"ts_h"}, [h('div', isscatter?'观察维度：':(sankey?'源：':'横轴：')), h('div', {attrs:{class:"h_ctx", id:"xcol"}}, xcol)]);
+	let xcolobj = h('div', {class:"ts_h"}, [h('div', {class:"h_tit"}, isscatter?'观察维度':(sankey?'源':'横轴')), h('div', {attrs:{class:"h_ctx", id:"xcol"}}, xcol)]);
 	if(isheatmap){
 		xcolobj.children.push(h('div',{class:"text-warning", domProps:{innerHTML:"热力图的横轴维度由地图经度加逗号加纬度构成,比如：101.91,30.19"}}));
 	}
@@ -116,7 +117,7 @@ export default {
 		}else{
 			ycol = [h('span', {class:"charttip"}, '将度量拖到这里')];
 		}
-		let ycolobj = h('div', {class:"ts_h"}, [h('div', (sankey?'度量：':'纵轴：')), h('div', {attrs:{class:"h_ctx", id:"ycol"}}, ycol)]);
+		let ycolobj = h('div', {class:"ts_h"}, [h('div', {class:"h_tit"}, (sankey?'度量':'纵轴')), h('div', {attrs:{class:"h_ctx", id:"ycol"}}, ycol)]);
 		leftCols.push(ycolobj);
 	}
 
@@ -131,7 +132,7 @@ export default {
 			);
 		});
 		//纵轴,
-		let ycolobj = h('div', {class:"ts_h", style: {'width' : "135px"}}, [h('div', '纵轴：'), h('div', {attrs:{class:"h_ctx_multi", id:"ycols"}}, ycols)]);
+		let ycolobj = h('div', {class:"ts_h", style: {'width' : "205px"}}, [h('div', {class:"h_tit", style:{height:'110px'}}, '纵轴'), h('div', {attrs:{class:"h_ctx_multi", id:"ycols"}}, ycols)]);
 		leftCols.push(ycolobj);
 	}
 
@@ -146,7 +147,7 @@ export default {
 			scol = [h('span', {class:"charttip"}, '将维度拖到这里')]
 		}
 		//图例 Ser
-		let scolobj = h('div', {class:"ts_h"}, [h('div', (sankey?'目标：':'图例')), h('div', {attrs:{class:"h_ctx", id:"scol"}},scol)]);
+		let scolobj = h('div', {class:"ts_h"}, [h('div', {class:"h_tit"}, (sankey?'目标':'图例')), h('div', {attrs:{class:"h_ctx", id:"scol"}},scol)]);
 		leftCols.push(scolobj);
 	}
 
@@ -159,7 +160,7 @@ export default {
 		}else{
 			y2col = [h('span', {class:"charttip"}, '将度量拖到这里')]
 		}
-		let y2obj = h('div', {class:"ts_h"}, [h('div', '第二纵轴'), h('div', {attrs:{class:"h_ctx", id:"y2col"}},y2col)]);
+		let y2obj = h('div', {class:"ts_h"}, [h('div', {class:"h_tit"}, '第二纵轴'), h('div', {attrs:{class:"h_ctx", id:"y2col"}},y2col)]);
 		leftCols.push(y2obj);
 	}
 	//更新拖拽事件
@@ -294,13 +295,13 @@ export default {
 			},
 			out:function(e, ui){
 				$(ui.helper[0]).find("span").removeClass("glyphicon-ok").addClass("glyphicon-remove");
-				$(this).css("border-color", "#7F9DB9");
+				$(this).css("border-color", "#dcdfe6");
 			},
 			drop:function(e, ui){
 				var id = ts.chartId;
 				var json = comp.comp;
 				//清除边框样式
-				$("#chartData #"+$(this).attr("id")).css("border-color", "#7F9DB9");
+				$("#chartData #"+$(this).attr("id")).css("border-color", "#dcdfe6");
 				//获取TREE
 				var ref = $("#datasettree").jstree(true);
 				var node = ref.get_node(ui.draggable[0]);
@@ -462,23 +463,44 @@ export default {
   .tsbd {
      .ts_h{
       font-size:13px;
-      margin:5px 20px 5px 5px;
-      width:125px;
-      float:left;
-    }
+      margin:5px 10px 5px 5px;
+      width:205px;
+	  float:left;
+	  padding-top: 20px;
+	}
+	.h_tit {
+		float: left;
+		border:1px solid #dcdfe6;
+		height:32px;
+		color: #909399;
+		font-size: 14px;
+		padding:5px 0px 3px 5px;
+		border-radius:5px;
+		background-color: #f5f7fa;
+		 width:80px;
+		 border-right: 0;
+		 border-top-right-radius: 0;
+		 border-bottom-right-radius: 0;
+	}
     .h_ctx{
-      border:1px solid #7F9DB9;
-      height:28px;
+      border:1px solid #dcdfe6;
+      height:32px;
       overflow:hidden;
       border-radius:5px;
-      padding:2px;
+	  padding:2px;
+	  font-size: 14px;
+	  border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
 	}
 	.h_ctx_multi {
-		border: 1px solid #7F9DB9;
-		height: 120px;
+		border: 1px solid #dcdfe6;
+		height: 110px;
 		overflow: auto;
 		line-height:16px;
 		border-radius:5px;
+		font-size: 14px;
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
 		div:hover {
 			background-color:#ccc;
 		}
@@ -486,12 +508,12 @@ export default {
   }
   span.charttip {
     color:#999999;
-    padding:3px;
+    padding:4px;
     display:block;
   }
   span.charttxt {
     display:inline-block;
-    width:99px;
+    width:100px;
     white-space:nowrap;
     overflow:hidden;
 	margin-left:3px;
@@ -504,6 +526,11 @@ export default {
     cursor:pointer;
 	font-size: 14px;
 	position: absolute;
+	margin-top:3px;
+	color: #909399;
+  }
+  a.charticon :hover {
+	  color: black;
   }
   span.mcharttxt {
 	display:-moz-inline-box;
