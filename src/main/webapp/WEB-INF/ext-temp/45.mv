@@ -1,1 +1,0 @@
-select  kpi_name k3, sum(kpi_value) d5 from dcdb_tongji where 1=1   group by kpi_name

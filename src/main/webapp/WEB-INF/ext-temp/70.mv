@@ -1,5 +1,0 @@
-#if($outType=='json')
- {"trueValue":#if($!k5.d1) $!k5.d1 #else null #end, value:"$extUtils.numberFmt($!k5.d1, '#,###')", alias:"d1", unit:'', rate:null, desc:"次数"}#else
-#if($!k5.d1) $extUtils.numberFmt($!k5.d1, '#,###') 
-#else '' #end
-#end

@@ -1,1 +1,0 @@
-select  day_id k1, sum(kpi_value) d5 from dcdb_tongji where 1=1   group by day_id

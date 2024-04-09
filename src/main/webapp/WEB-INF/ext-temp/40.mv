@@ -1,1 +1,0 @@
-select  kpi_id as kpi_id from dcdb_tongji where 1=1   #if($!t_sort_col && $t_sort_col != '')  order by  $t_sort_col $t_sort_type  #else  #end 
